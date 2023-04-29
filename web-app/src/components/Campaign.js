@@ -19,14 +19,14 @@ export default function Campaign() {
   const [currentAccount, setCurrentAccount] = useState(null)
   const [networkId, setNetworkId] = useState(null)
   const [contractInfo, setContractInfo] = useState({
-      name: 'N/A',
-      targetAmount: 0,
-      totalCollected: 0,
-      campaignFinished: false,
-      deadline: new Date(0),
-      isBeneficiary: true,
-      contributedAmount: 10,
-      state: ONGOING_STATE
+      owners: 'N/A'
+      // targetAmount: 0,
+      // totalCollected: 0,
+      // campaignFinished: false,
+      // deadline: new Date(0),
+      // isBeneficiary: true,
+      // contributedAmount: 10,
+      // state: ONGOING_STATE
   })
 
   async function connectWallet() {
@@ -64,29 +64,30 @@ export default function Campaign() {
       const contract = getContract(web3, address)
 
       try {
-        const name = await contract.methods.name().call()
-        const targetAmount = await contract.methods.targetAmount().call()
-        const totalCollected = await contract.methods.totalCollected().call()
-        const beforeDeadline = await contract.methods.beforeDeadline().call()
-        const beneficiary = await contract.methods.beneficiary().call()
-        const deadlineSeconds = await contract.methods.fundingDeadline().call()
-        const contributedAmount = await contract.methods.amounts(currentAccount).call()
-        const state = await contract.methods.state().call()
+        const owners = await contract.methods.getOwners().call()
+        // const targetAmount = await contract.methods.targetAmount().call()
+        // const totalCollected = await contract.methods.totalCollected().call()
+        // const beforeDeadline = await contract.methods.beforeDeadline().call()
+        // const beneficiary = await contract.methods.beneficiary().call()
+        // const deadlineSeconds = await contract.methods.fundingDeadline().call()
+        // const contributedAmount = await contract.methods.amounts(currentAccount).call()
+        // const state = await contract.methods.state().call()
 
         var deadlineDate = new Date(0)
-        deadlineDate.setUTCSeconds(deadlineSeconds)
+        // deadlineDate.setUTCSeconds(deadlineSeconds)
 
         setContractInfo({
-          name: name,
-          targetAmount: targetAmount,
-          totalCollected: totalCollected,
-          campaignFinished: !beforeDeadline,
-          deadline: deadlineDate,
-          isBeneficiary: beneficiary.toLowerCase() === currentAccount.toLowerCase(),
-          contributedAmount: contributedAmount,
-          state: state
+          owners: owners,
+          // targetAmount: targetAmount,
+          // totalCollected: totalCollected,
+          // campaignFinished: !beforeDeadline,
+          // deadline: deadlineDate,
+          // isBeneficiary: beneficiary.toLowerCase() === currentAccount.toLowerCase(),
+          // contributedAmount: contributedAmount,
+          // state: state
         })
       } catch (e) {
+        console.log("error during contract loading: "+e)
         setContractInfo(null)
       }
     }
@@ -125,11 +126,11 @@ export default function Campaign() {
     <Table.Body>
 
       <Table.Row>
-        <Table.Cell>Name</Table.Cell>
-        <Table.Cell>{contractInfo.name}</Table.Cell>
+        <Table.Cell>Owners</Table.Cell>
+        <Table.Cell>{contractInfo.owners}</Table.Cell>
       </Table.Row>
 
-      <Table.Row>
+      {/* <Table.Row>
         <Table.Cell>Target amount</Table.Cell>
         <Table.Cell>{contractInfo.targetAmount}</Table.Cell>
       </Table.Row>
@@ -157,7 +158,7 @@ export default function Campaign() {
       <Table.Row>
         <Table.Cell>Contract state</Table.Cell>
         <Table.Cell>{contractInfo.state}</Table.Cell>
-      </Table.Row>
+      </Table.Row> */}
 
     </Table.Body>
 
