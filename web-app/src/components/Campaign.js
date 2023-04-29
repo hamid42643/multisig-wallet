@@ -18,16 +18,29 @@ export default function Campaign() {
   const web3 = useMemo(() => getWeb3(), [])
   const [currentAccount, setCurrentAccount] = useState(null)
   const [networkId, setNetworkId] = useState(null)
+  const [transactions, setTransactions] = useState([]);
   const [contractInfo, setContractInfo] = useState({
-      owners: 'N/A'
-      // targetAmount: 0,
-      // totalCollected: 0,
-      // campaignFinished: false,
-      // deadline: new Date(0),
-      // isBeneficiary: true,
-      // contributedAmount: 10,
-      // state: ONGOING_STATE
+      owners: 'N/A',
+      transactionCount: 'N/A',
+      transaction: 'N/A'
   })
+
+  async function fetchAllTransactions() {
+    try {
+      const transactionCount = await contract.methods.getTransactionCount().call();
+      const fetchedTransactions = [];
+  
+      for (let i = 0; i < transactionCount; i++) {
+        const transaction = await contract.methods.getTransaction(i).call();
+        fetchedTransactions.push(transaction);
+      }
+  
+      setTransactions(fetchedTransactions);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    }
+  }
+  
 
   async function connectWallet() {
     const accounts = await web3.eth.requestAccounts()
@@ -65,32 +78,20 @@ export default function Campaign() {
 
       try {
         const owners = await contract.methods.getOwners().call()
-        // const targetAmount = await contract.methods.targetAmount().call()
-        // const totalCollected = await contract.methods.totalCollected().call()
-        // const beforeDeadline = await contract.methods.beforeDeadline().call()
-        // const beneficiary = await contract.methods.beneficiary().call()
-        // const deadlineSeconds = await contract.methods.fundingDeadline().call()
-        // const contributedAmount = await contract.methods.amounts(currentAccount).call()
-        // const state = await contract.methods.state().call()
-
-        var deadlineDate = new Date(0)
-        // deadlineDate.setUTCSeconds(deadlineSeconds)
+        const transactionCount = await contract.methods.getTransactionCount().call()
+        // const transaction = await contract.methods.getTransaction(0).call()
 
         setContractInfo({
           owners: owners,
-          // targetAmount: targetAmount,
-          // totalCollected: totalCollected,
-          // campaignFinished: !beforeDeadline,
-          // deadline: deadlineDate,
-          // isBeneficiary: beneficiary.toLowerCase() === currentAccount.toLowerCase(),
-          // contributedAmount: contributedAmount,
-          // state: state
+          transactionCount: transactionCount,
+          // transaction: transaction
         })
       } catch (e) {
         console.log("error during contract loading: "+e)
         setContractInfo(null)
       }
     }
+    fetchAllTransactions();
     getCampaign(address)
   }, [web3, address, currentAccount, networkId])
 
@@ -115,61 +116,94 @@ export default function Campaign() {
     )
   }
 
-  return <Table celled>
-    <Table.Header>
-      <Table.Row>
-        <Table.HeaderCell>Name</Table.HeaderCell>
-        <Table.HeaderCell>Value</Table.HeaderCell>
-      </Table.Row>
-    </Table.Header>
+  return (
+    <Table celled>
+      <Table.Header>
+        <Table.Row>
+          <Table.HeaderCell>Name</Table.HeaderCell>
+          <Table.HeaderCell>Value</Table.HeaderCell>
+        </Table.Row>
+      </Table.Header>
 
-    <Table.Body>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell>Owners</Table.Cell>
+          <Table.Cell>{contractInfo.owners}</Table.Cell>
+        </Table.Row>
 
-      <Table.Row>
-        <Table.Cell>Owners</Table.Cell>
-        <Table.Cell>{contractInfo.owners}</Table.Cell>
-      </Table.Row>
+        <Table.Row>
+          <Table.Cell>transactionCount</Table.Cell>
+          <Table.Cell>{contractInfo.transactionCount}</Table.Cell>
+        </Table.Row>
 
-      {/* <Table.Row>
-        <Table.Cell>Target amount</Table.Cell>
-        <Table.Cell>{contractInfo.targetAmount}</Table.Cell>
-      </Table.Row>
+        {transactions.map((transaction, index) => (
+          <React.Fragment key={index}>
+            <Table.Row>
+              <Table.Cell>To</Table.Cell>
+              <Table.Cell>{transaction.to}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Value</Table.Cell>
+              <Table.Cell>{transaction.value}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Data</Table.Cell>
+              <Table.Cell>{transaction.data}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Executed</Table.Cell>
+              <Table.Cell>{transaction.executed.toString()}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>NumConfirmations</Table.Cell>
+              <Table.Cell>{transaction.numConfirmations}</Table.Cell>
+            </Table.Row>
+          </React.Fragment>
+        ))}
+      </Table.Body>
 
-      <Table.Row>
-        <Table.Cell>Has finished</Table.Cell>
-        <Table.Cell>{contractInfo.campaignFinished.toString()}</Table.Cell>
-      </Table.Row>
+      <Table.Footer fullWidth>
+        <Table.Row>
+          <Table.HeaderCell colSpan="2">
+            {campaignInteractionSection(contractInfo, address, currentAccount)}
+          </Table.HeaderCell>
+        </Table.Row>
+      </Table.Footer>
+    </Table>
+  );
 
-      <Table.Row>
-        <Table.Cell>Deadline</Table.Cell>
-        <Table.Cell>{contractInfo.deadline.toString()}</Table.Cell>
-      </Table.Row>
+  // return <Table celled>
+  //   <Table.Header>
+  //     <Table.Row>
+  //       <Table.HeaderCell>Name</Table.HeaderCell>
+  //       <Table.HeaderCell>Value</Table.HeaderCell>
+  //     </Table.Row>
+  //   </Table.Header>
 
-      <Table.Row>
-        <Table.Cell>I am beneficiary</Table.Cell>
-        <Table.Cell>{contractInfo.isBeneficiary.toString()}</Table.Cell>
-      </Table.Row>
+  //   <Table.Body>
 
-      <Table.Row>
-        <Table.Cell>Contributed amount</Table.Cell>
-        <Table.Cell>{contractInfo.contributedAmount.toString()}</Table.Cell>
-      </Table.Row>
+  //     <Table.Row>
+  //       <Table.Cell>Owners</Table.Cell>
+  //       <Table.Cell>{contractInfo.owners}</Table.Cell>
+  //     </Table.Row>
 
-      <Table.Row>
-        <Table.Cell>Contract state</Table.Cell>
-        <Table.Cell>{contractInfo.state}</Table.Cell>
-      </Table.Row> */}
+  //     <Table.Row>
+  //       <Table.Cell>transactionCount</Table.Cell>
+  //       <Table.Cell>{contractInfo.transactionCount}</Table.Cell>
+  //     </Table.Row>
 
-    </Table.Body>
+  //   </Table.Body>
 
-    <Table.Footer fullWidth>
-      <Table.Row>
-        <Table.HeaderCell colSpan="2">
-          {campaignInteractionSection(contractInfo, address, currentAccount)}
-        </Table.HeaderCell>
-      </Table.Row>
-    </Table.Footer>
-  </Table>
+  //   <Table.Footer fullWidth>
+  //     <Table.Row>
+  //       <Table.HeaderCell colSpan="2">
+  //         {campaignInteractionSection(contractInfo, address, currentAccount)}
+  //       </Table.HeaderCell>
+  //     </Table.Row>
+  //   </Table.Footer>
+  // </Table>
+
+  
 }
 
 function campaignInteractionSection(contractInfo, address, currentAccount) {
