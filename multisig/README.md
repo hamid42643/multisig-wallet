@@ -17,11 +17,11 @@ truffle migirte --network ganache
 truffle console --network ganache
 
 # set varibles
-ACCOUNT1='0xe23BF6F66E1c245B94fbBC73cd082a8c37ecF9e9';
-ACCOUNT2='0x6216F6C5062b40A78496ebA64cb5913363DCC792';
-ACCOUNT3='0x4a06cfa2E61DC45e8A49659279D34A5Cbe226caB';
-RECIPIENT_ACCOUNT='0x66138EDb2543406A18F86910a5E09124BE1c843F'
-transactionNum=14;
+ACCOUNT1='0x8866153d6325c6c25DCF1fa82e5055A0Aedc85eb';
+ACCOUNT2='0x383f48a3AA961414fD0944a9C477C9a4996c003A';
+ACCOUNT3='0x59e59BA40e41559621EB06912BD2cfDF00d825dF';
+RECIPIENT_ACCOUNT='0xDE924669c2319D05B3C3ee96464a13760D5617d1'
+transactionNum=1;
 depositAmount=1;
 data=[];
 
@@ -35,7 +35,7 @@ const multiSigWallet = await MultiSigWallet.deployed()
 # get owners
 multiSigWallet.getOwners()
 
-# submit a transaction - send 20 money from account 4 to account 6
+# submit a transaction - send 20 to RECIPIENT_ACCOUNT
 multiSigWallet.submitTransaction(RECIPIENT_ACCOUNT, web3.utils.toWei('2', 'ether'), []);
 
 # confirm transaction

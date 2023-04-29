@@ -21,26 +21,10 @@ export default function Campaign() {
   const [transactions, setTransactions] = useState([]);
   const [contractInfo, setContractInfo] = useState({
       owners: 'N/A',
-      transactionCount: 'N/A',
-      transaction: 'N/A'
+      transactionCount: 'N/A'
   })
 
-  async function fetchAllTransactions() {
-    try {
-      const transactionCount = await contract.methods.getTransactionCount().call();
-      const fetchedTransactions = [];
-  
-      for (let i = 0; i < transactionCount; i++) {
-        const transaction = await contract.methods.getTransaction(i).call();
-        fetchedTransactions.push(transaction);
-      }
-  
-      setTransactions(fetchedTransactions);
-    } catch (error) {
-      console.error('Error fetching transactions:', error);
-    }
-  }
-  
+
 
   async function connectWallet() {
     const accounts = await web3.eth.requestAccounts()
@@ -71,15 +55,35 @@ export default function Campaign() {
   })
 
   useEffect(() => {
+    async function fetchAllTransactions() {
+      try {
+        const contract = getContract(web3, address)
+  
+        const transactionCount = await contract.methods.getTransactionCount().call();
+        const fetchedTransactions = [];
+    
+        for (let i = 0; i < transactionCount; i++) {
+          const transaction = await contract.methods.getTransaction(i).call();
+          fetchedTransactions.push(transaction);
+        }
+    
+        setTransactions(fetchedTransactions);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    }
+    
     async function getCampaign(address) {
       if (!currentAccount) return;
 
       const contract = getContract(web3, address)
 
       try {
-        const owners = await contract.methods.getOwners().call()
+        const ownersArray = await contract.methods.getOwners().call()
         const transactionCount = await contract.methods.getTransactionCount().call()
         // const transaction = await contract.methods.getTransaction(0).call()
+
+        const owners = ownersArray.join(', ');
 
         setContractInfo({
           owners: owners,
@@ -128,7 +132,9 @@ export default function Campaign() {
       <Table.Body>
         <Table.Row>
           <Table.Cell>Owners</Table.Cell>
-          <Table.Cell>{contractInfo.owners}</Table.Cell>
+          <Table.Cell>
+            <pre>{contractInfo.owners}</pre>
+          </Table.Cell>
         </Table.Row>
 
         <Table.Row>
@@ -138,6 +144,11 @@ export default function Campaign() {
 
         {transactions.map((transaction, index) => (
           <React.Fragment key={index}>
+            <Table.Row>
+              <Table.Cell colSpan="2">
+                <hr />
+              </Table.Cell>
+            </Table.Row>
             <Table.Row>
               <Table.Cell>To</Table.Cell>
               <Table.Cell>{transaction.to}</Table.Cell>
@@ -171,38 +182,6 @@ export default function Campaign() {
       </Table.Footer>
     </Table>
   );
-
-  // return <Table celled>
-  //   <Table.Header>
-  //     <Table.Row>
-  //       <Table.HeaderCell>Name</Table.HeaderCell>
-  //       <Table.HeaderCell>Value</Table.HeaderCell>
-  //     </Table.Row>
-  //   </Table.Header>
-
-  //   <Table.Body>
-
-  //     <Table.Row>
-  //       <Table.Cell>Owners</Table.Cell>
-  //       <Table.Cell>{contractInfo.owners}</Table.Cell>
-  //     </Table.Row>
-
-  //     <Table.Row>
-  //       <Table.Cell>transactionCount</Table.Cell>
-  //       <Table.Cell>{contractInfo.transactionCount}</Table.Cell>
-  //     </Table.Row>
-
-  //   </Table.Body>
-
-  //   <Table.Footer fullWidth>
-  //     <Table.Row>
-  //       <Table.HeaderCell colSpan="2">
-  //         {campaignInteractionSection(contractInfo, address, currentAccount)}
-  //       </Table.HeaderCell>
-  //     </Table.Row>
-  //   </Table.Footer>
-  // </Table>
-
   
 }
 

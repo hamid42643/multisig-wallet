@@ -1,0 +1,45 @@
+hamids-MacBook-Air:multisig hamidhooshmandi$ truffle migirte --network ganache
+
+Compiling your contracts...
+===========================
+> Compiling ./contracts/Migrations.sol
+> Artifacts written to /Users/hamidhooshmandi/Documents/projects/multisig-wallet/multisig/build/contracts
+> Compiled successfully using:
+   - solc: 0.5.16+commit.9c3226ce.Emscripten.clang
+
+
+Starting migrations...
+======================
+> Network name:    'ganache'
+> Network id:      5777
+> Block gas limit: 6721975 (0x6691b7)
+
+
+2_deploy_multisig.js
+====================
+
+   Replacing 'MultiSigWallet'
+   --------------------------
+   > transaction hash:    0x6f79ed1a82407cbb902ec63bdcc0c6c3a38c1c9e38782400d512ff5979274adb
+   > Blocks: 0            Seconds: 0
+   > contract address:    0x11389689b93B2588515D1a311d94e0D0134A048D
+   > block number:        4
+   > block timestamp:     1682809099
+   > account:             0x8866153d6325c6c25DCF1fa82e5055A0Aedc85eb
+   > balance:             34.989317706567299113
+   > gas used:            1628059 (0x18d79b)
+   > gas price:           3.127864693 gwei
+   > value sent:          0 ETH
+   > total cost:          0.005092348264220887 ETH
+
+   > Saving artifacts
+   -------------------------------------
+   > Total cost:     0.005092348264220887 ETH
+
+Summary
+=======
+> Total deployments:   1
+> Final cost:          0.005092348264220887 ETH
+
+
+hamids-MacBook-Air:multisig hamidhooshmandi$ 
