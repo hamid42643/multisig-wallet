@@ -15,6 +15,7 @@ const FAILED_STATE = '1'
 const SUCCEDED_STATE = '2'
 
 export default function Campaign() {
+  const [totalEther, setTotalEther] = useState('N/A');
   const web3 = useMemo(() => getWeb3(), [])
   const [currentAccount, setCurrentAccount] = useState(null)
   const [networkId, setNetworkId] = useState(null)
@@ -23,8 +24,6 @@ export default function Campaign() {
       owners: 'N/A',
       transactionCount: 'N/A'
   })
-
-
 
   async function connectWallet() {
     const accounts = await web3.eth.requestAccounts()
@@ -79,12 +78,17 @@ export default function Campaign() {
       const contract = getContract(web3, address)
 
       try {
+        const contractBalance = await web3.eth.getBalance(address);
+        const etherBalance = web3.utils.fromWei(contractBalance, 'ether');
+
         const ownersArray = await contract.methods.getOwners().call()
         const transactionCount = await contract.methods.getTransactionCount().call()
         // const transaction = await contract.methods.getTransaction(0).call()
 
         const owners = ownersArray.join(', ');
+        
 
+        setTotalEther(etherBalance);
         setContractInfo({
           owners: owners,
           transactionCount: transactionCount,
@@ -130,6 +134,10 @@ export default function Campaign() {
       </Table.Header>
 
       <Table.Body>
+        <Table.Row>
+          <Table.Cell>Total Ether</Table.Cell>
+          <Table.Cell>{totalEther} ETH</Table.Cell>
+        </Table.Row>
         <Table.Row>
           <Table.Cell>Owners</Table.Cell>
           <Table.Cell>

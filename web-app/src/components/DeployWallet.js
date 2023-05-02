@@ -26,24 +26,6 @@ const DeployMultiSigWallet = () => {
 
     const multiSigWallet = getContractWithNoAddress(web3)
 
-    // multiSigWallet.deploy({
-    //   data: bytecode,
-    //   arguments: [parsedOwners, confirmations]
-    // })
-    // .send({ from: accounts[0], gas: 1000000})
-    // .on('error', (error) => {
-    //   console.log(`Error: ${error.message}`);
-    // })
-    // .on('transactionHash', (transactionHash) => {
-    //   console.log(`Transaction Hash: ${transactionHash}`);
-    // })
-    // .on('receipt', (receipt) => {
-    //   // setContractInstance(receipt.contractAddress);
-    //   console.log(`Contract deployed at address: ${receipt.contractAddress}`);
-    // });
-
-    // const multiSigWallet = new web3.eth.Contract(MultiSigWallet.abi);
-
     try {
       const deployedContract = await multiSigWallet
         .deploy({
