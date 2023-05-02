@@ -13,7 +13,7 @@ contract MultiSigWallet {
 
     event ConfirmTransaction(address indexed owner, uint indexed txIndex);
 
-    event RevokeConfirmation(address indexed owner, uint indexed txIndex);
+    // event RevokeConfirmation(address indexed owner, uint indexed txIndex);
 
     event ExecuteTransaction(address indexed owner, uint indexed txIndex);
 
@@ -271,19 +271,19 @@ contract MultiSigWallet {
 
     */
 
-    function revokeConfirmation(
-        uint _txIndex
-    ) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) {
-        Transaction storage transaction = transactions[_txIndex];
+    // function revokeConfirmation(
+    //     uint _txIndex
+    // ) public onlyOwner txExists(_txIndex) notExecuted(_txIndex) {
+    //     Transaction storage transaction = transactions[_txIndex];
 
-        require(transaction.isConfirmed[msg.sender], "tx not confirmed");
+    //     require(transaction.isConfirmed[msg.sender], "tx not confirmed");
 
-        transaction.isConfirmed[msg.sender] = false;
+    //     transaction.isConfirmed[msg.sender] = false;
 
-        transaction.numConfirmations -= 1;
+    //     transaction.numConfirmations -= 1;
 
-        emit RevokeConfirmation(msg.sender, _txIndex);
-    }
+    //     emit RevokeConfirmation(msg.sender, _txIndex);
+    // }
 
     function getOwners() public view returns (address[] memory) {
         return owners;
