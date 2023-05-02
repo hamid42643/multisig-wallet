@@ -1,5 +1,4 @@
 import Web3 from 'web3'
-import multisigAbi from './multisigAbi.js-'
 import multisig from '../contract/MultiSigWallet.json'
 
 
