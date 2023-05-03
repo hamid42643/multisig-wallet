@@ -8,7 +8,7 @@ export default function Home() {
 
   return (
     <div>
-      <Header as="h1">Crowdfunding application</Header>
+      <Header as="h1">Multisig Wallet</Header>
 
       <Form>
         <Form.Input
@@ -26,12 +26,12 @@ export default function Home() {
           Submit
         </Button>
       </Form>
-      <div>
+      {/* <div>
         <Header as="h3">Deploy a new MultiSig Wallet</Header>
         <Link to="/deploy">
           <Button primary>Deploy MultiSig Wallet</Button>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }
