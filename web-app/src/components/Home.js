@@ -20,7 +20,7 @@ export default function Home() {
         <Button
           type="submit"
           onClick={() => {
-            navigate(`/campaigns/${address}`);
+            navigate(`/transactions/${address}`);
           }}
         >
           Submit

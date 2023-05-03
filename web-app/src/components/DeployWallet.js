@@ -4,9 +4,6 @@ import React, { useState, useMemo } from 'react';
 import { getWeb3 } from '../ethereum/utils'
 
 import { Button, Form, Input } from 'semantic-ui-react';
-// import { useParams} from 'react-router-dom'
-// import web3 from './web3';
-// import MultiSigWallet from './MultiSigWallet'; 
 import { getContractWithNoAddress } from '../ethereum/utils'
 import { getContractBytecode } from '../ethereum/utils'
 

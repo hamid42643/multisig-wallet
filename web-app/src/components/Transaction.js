@@ -5,9 +5,6 @@ import {
 } from 'react-router-dom'
 import { getWeb3 } from '../ethereum/utils'
 
-import ContributeInput from './ContributeInput'
-import SuccededStateInput from './SuccededStateInput'
-import FailedStateInput from './FailedStateInput'
 import { getContract } from '../ethereum/utils'
 
 const ONGOING_STATE = '0'
@@ -181,32 +178,24 @@ export default function Campaign() {
         ))}
       </Table.Body>
 
-      <Table.Footer fullWidth>
+      {/* <Table.Footer fullWidth>
         <Table.Row>
           <Table.HeaderCell colSpan="2">
             {campaignInteractionSection(contractInfo, address, currentAccount)}
           </Table.HeaderCell>
         </Table.Row>
-      </Table.Footer>
+      </Table.Footer> */}
     </Table>
   );
   
 }
 
-function campaignInteractionSection(contractInfo, address, currentAccount) {
-  if (contractInfo.state === ONGOING_STATE) {
-    return <ContributeInput
-      campaignFinished={contractInfo.campaignFinished}
-      contractAddress={address}
-      currentAccount={currentAccount}
-    />
-  } else if (contractInfo.state === SUCCEDED_STATE) {
-    return <SuccededStateInput
-      isBeneficiary={contractInfo.isBeneficiary}
-    />
-  } else if (contractInfo.state === FAILED_STATE) {
-    return <FailedStateInput
-      contributedByCurrentAccount={contractInfo.contributedByCurrentAccount}
-    />
-  }
-}
+// function campaignInteractionSection(contractInfo, address, currentAccount) {
+//   if (contractInfo.state === ONGOING_STATE) {
+//     return <ContributeInput
+//       campaignFinished={contractInfo.campaignFinished}
+//       contractAddress={address}
+//       currentAccount={currentAccount}
+//     />
+//   } 
+// }

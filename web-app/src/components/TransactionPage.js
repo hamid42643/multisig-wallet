@@ -1,8 +1,8 @@
 import React from 'react'
 import { Message } from 'semantic-ui-react'
-import Campaign from './Campaign'
+import Transaction from './Transaction'
 
-export default function CampaignPage() {
+export default function TransactionPage() {
   if (!isWalletPluginInstalled()) {
     return <Message negative>
       <Message.Header>Wallet not available</Message.Header>
@@ -10,7 +10,7 @@ export default function CampaignPage() {
     </Message>
   }
 
-  return <Campaign />
+  return <Transaction />
 }
 
 function isWalletPluginInstalled() {

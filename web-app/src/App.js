@@ -1,7 +1,7 @@
 import './App.css'
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import CampaignPage from './components/CampaignPage'
+import TransactionPage from './components/TransactionPage'
 import DeployMultiSigWallet from './components/DeployWallet'
 import { Container, Menu } from 'semantic-ui-react'
 import Home from './components/Home'
@@ -38,7 +38,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path="/interact/:address" element={<InteractWithMultiSigWallet />} />
         <Route path="/deploy" element={<DeployMultiSigWallet />} />
-        <Route path='/campaigns/:address' element={<CampaignPage />} />
+        <Route path='/transactions/:address' element={<TransactionPage />} />
         <Route
           path='*'
           element={<NotFound />}
