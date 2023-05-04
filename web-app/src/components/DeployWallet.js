@@ -36,7 +36,7 @@ const DeployMultiSigWallet = () => {
           gas: '1000000'
         });
       console.log('Deployed contract address:', deployedContract.options.address);
-      setErrorMsg('Deployed contract address:', deployedContract.options.address);
+      setErrorMsg('Deployed contract address:'+ deployedContract.options.address);
     } catch (error) {
       console.error('Error deploying the contract:'+ formatMessage(error.message));
       setErrorMsg('Error deploying the contract:'+ formatMessage(error.message));
