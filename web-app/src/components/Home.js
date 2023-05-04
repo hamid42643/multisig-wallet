@@ -29,7 +29,7 @@ export default function Home() {
       {/* <div>
         <Header as="h3">Deploy a new MultiSig Wallet</Header>
         <Link to="/deploy">
-          <Button primary>Deploy MultiSig Wallet</Button>
+          <Button primary>Create MultiSig Wallet</Button>
         </Link>
       </div> */}
     </div>

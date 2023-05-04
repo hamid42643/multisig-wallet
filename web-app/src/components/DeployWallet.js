@@ -56,7 +56,7 @@ const DeployMultiSigWallet = () => {
 
   return (
     <div>
-      <h2>Deploy MultiSig Wallet</h2>
+      <h2>Create MultiSig Wallet</h2>
       <Form onSubmit={onSubmit}>
         <Form.Field>
           <label>Owners (comma-separated addresses)</label>

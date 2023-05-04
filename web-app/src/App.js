@@ -65,7 +65,7 @@ function App() {
           onClick={() => navigate('/interact/0x28860361f4C4F2B8c15211e3A18Dd53af8bD7Aab')}
         />
         <Menu.Item
-          name='Deploy new contract'
+          name='Create new wallet'
           onClick={() => navigate('/deploy')}
         />
         <Menu.Item>
