@@ -17,3 +17,7 @@ export function getContractWithNoAddress(web3) {
 export function getContractBytecode(web3) {
   return new web3.eth.Contract(multisig.bytecode)
 }
+
+export function isWalletPluginInstalled() {
+  return !!window.ethereum
+}
