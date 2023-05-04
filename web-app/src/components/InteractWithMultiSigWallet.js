@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { getWeb3, getContract } from '../ethereum/utils';
-import { Button, Form, Input } from 'semantic-ui-react';
+import { Button, Form, Input, Modal } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
 
 
@@ -11,9 +11,11 @@ const InteractWithMultiSigWallet = () => {
   const [value, setValue] = useState('');
   const [data, setData] = useState('');
   const { address } = useParams();
-
+  const [errorMsg, setErrorMsg] = useState('');
 
   const multiSigWallet = useMemo(() => getContract(web3, address), [web3, address]);
+
+  const closeErrorModal = () => setErrorMsg('');
 
   const onSubmitTransaction = async () => {
     try {
@@ -23,8 +25,9 @@ const InteractWithMultiSigWallet = () => {
         .send({ from: accounts[0] });
 
       console.log('Transaction submitted');
+      setErrorMsg('Transaction submitted');
     } catch (error) {
-      console.error('Error submitting transaction:', error);
+      setErrorMsg('Error submitting transaction: ' + error.message);
     }
   };
 
@@ -36,8 +39,9 @@ const InteractWithMultiSigWallet = () => {
         .send({ from: accounts[0] });
 
       console.log('Transaction confirmed');
+      setErrorMsg('Transaction confirmed');
     } catch (error) {
-      console.error('Error confirming transaction:', error);
+      setErrorMsg('Error confirming transaction: ' + error.message);
     }
   };
 
@@ -49,10 +53,21 @@ const InteractWithMultiSigWallet = () => {
         .send({ from: accounts[0] });
 
       console.log('Transaction executed');
+      setErrorMsg('Transaction executed');
     } catch (error) {
-      console.error('Error executing transaction:', error);
+      setErrorMsg('Error executing transaction: ' + formatMessage(error.message));
     }
   };
+
+  function formatMessage(message) {
+    const regex = /"message":"(VM Exception while processing transaction: .*?)"/;
+    const matches = message.match(regex);
+    
+    if (matches && matches[1]) {
+      return matches[1];
+    }
+    return message;
+  }
 
   return (
     <div>
@@ -106,6 +121,15 @@ const InteractWithMultiSigWallet = () => {
           Execute Transaction
         </Button>
       </Form>
+      <Modal open={!!errorMsg} onClose={closeErrorModal} size="small">
+        <Modal.Header></Modal.Header>
+        <Modal.Content>
+          <p>{errorMsg}</p>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button onClick={closeErrorModal}>Close</Button>
+        </Modal.Actions>
+      </Modal>
     </div>
   );
 };
