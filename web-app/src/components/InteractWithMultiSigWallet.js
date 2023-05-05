@@ -21,7 +21,7 @@ const InteractWithMultiSigWallet = () => {
     try {
       const accounts = await web3.eth.getAccounts();
       await multiSigWallet.methods
-        .submitTransaction(to, value, web3.utils.asciiToHex(data))
+        .submitTransaction(to, web3.utils.toWei(value, 'ether'), web3.utils.asciiToHex(data))
         .send({ from: accounts[0] });
 
       console.log('Transaction submitted');

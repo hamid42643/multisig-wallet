@@ -62,7 +62,7 @@ function App() {
         />
         <Menu.Item
           name='Submit transaction'
-          onClick={() => navigate('/interact/0x28860361f4C4F2B8c15211e3A18Dd53af8bD7Aab')}
+          onClick={() => navigate('/interact/0x33e5C51e980517F0b088BfA1C61C579B0D8f1A29')}
         />
         <Menu.Item
           name='Create new wallet'
