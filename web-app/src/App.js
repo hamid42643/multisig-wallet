@@ -30,7 +30,7 @@ function App() {
       const accounts = await web3.eth.getAccounts();
       setCurrentAccount(accounts[0]);
       setAccounts(accounts);
-  
+
       // Listen for account changes
       window.ethereum.on('accountsChanged', (newAccounts) => {
         setCurrentAccount(newAccounts[0]);

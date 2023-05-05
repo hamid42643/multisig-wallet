@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getWeb3, getContract } from '../ethereum/utils';
 import { Button, Form, Input, Modal } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
-
 
 const InteractWithMultiSigWallet = () => {
   const web3 = useMemo(() => getWeb3(), []);
@@ -12,11 +11,35 @@ const InteractWithMultiSigWallet = () => {
   const [data, setData] = useState('');
   const { address } = useParams();
   const [errorMsg, setErrorMsg] = useState('');
+  const [etherBalance, setEtherBalance] = useState('');
 
   const multiSigWallet = useMemo(() => getContract(web3, address), [web3, address]);
 
+  useEffect(() => {
+    const fetchBalance = async () => {
+      const balanceWei = await web3.eth.getBalance(address);
+      const balanceEther = web3.utils.fromWei(balanceWei, 'ether');
+      setEtherBalance(balanceEther);
+    };
+
+    const subscription = web3.eth.subscribe('newBlockHeaders', async (error, blockHeader) => {
+      if (error) {
+        console.error(`Error in block subscription: ${error.message}`);
+        return;
+      }
+      await fetchBalance();
+    });
+
+    fetchBalance();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [web3, address]);
+
   const closeErrorModal = () => setErrorMsg('');
 
+  
   const onSubmitTransaction = async () => {
     try {
       const accounts = await web3.eth.getAccounts();
@@ -45,6 +68,8 @@ const InteractWithMultiSigWallet = () => {
     }
   };
 
+
+
   const onExecuteTransaction = async () => {
     try {
       const accounts = await web3.eth.getAccounts();
@@ -62,7 +87,7 @@ const InteractWithMultiSigWallet = () => {
   function formatMessage(message) {
     const regex = /"message":"(VM Exception while processing transaction: .*?)"/;
     const matches = message.match(regex);
-    
+
     if (matches && matches[1]) {
       return matches[1];
     }
@@ -71,7 +96,7 @@ const InteractWithMultiSigWallet = () => {
 
   return (
     <div>
-      <h2>Interact with MultiSig Wallet</h2>
+      <h3>Balance: {etherBalance} Ether</h3>
       <Form onSubmit={onSubmitTransaction}>
         <h3>Submit Transaction</h3>
         <Form.Field>
