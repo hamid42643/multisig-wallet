@@ -8,13 +8,13 @@ import { Container, Menu, Button, Label } from 'semantic-ui-react';
 import Home from './components/Home';
 import NotFound from './components/NotFound';
 import InteractWithMultiSigWallet from './components/InteractWithMultiSigWallet';
-// import { Container, Menu, Button, Label } from 'semantic-ui-react';
 
 import {
   useNavigate,
 } from 'react-router-dom';
 
 function App() {
+  const [contractAddress, setContractAddress] = React.useState('');
   const web3 = useMemo(() => getWeb3(), [])
   let navigate = useNavigate();
   const [currentAccount, setCurrentAccount] = React.useState('');
@@ -39,7 +39,6 @@ function App() {
       console.error('Error while connecting wallet:', error);
     }
   }
-  
 
 
   async function handleAccountChange(event, data) {
@@ -71,6 +70,7 @@ function App() {
         <Menu.Item>
           <Label content={`Current account: ${currentAccount}`} />
         </Menu.Item>
+
 
       </Menu>
       <Routes>

@@ -4,6 +4,8 @@ import { Button, Form, Input, Modal } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
 
 const InteractWithMultiSigWallet = () => {
+  const [numConfirmationsRequired, setNumConfirmationsRequired] = useState(0);
+  const [numOwners, setNumOwners] = useState(0);
   const web3 = useMemo(() => getWeb3(), []);
   const [transactionIndex, setTransactionIndex] = useState('');
   const [to, setTo] = useState('');
@@ -12,29 +14,47 @@ const InteractWithMultiSigWallet = () => {
   const { address } = useParams();
   const [errorMsg, setErrorMsg] = useState('');
   const [etherBalance, setEtherBalance] = useState('');
-
+  const [lastTransactionIndex, setLastTransactionIndex] = useState(0);
   const multiSigWallet = useMemo(() => getContract(web3, address), [web3, address]);
 
   useEffect(() => {
-    const fetchBalance = async () => {
+    const fetchLastTransactionIndex = async () => {
+      const transactionCount = await multiSigWallet.methods.getTransactionCount().call();
+      setLastTransactionIndex(transactionCount - 1);
+    };
+    
+    const fetchInfo = async () => {
+      // Fetch balance
       const balanceWei = await web3.eth.getBalance(address);
       const balanceEther = web3.utils.fromWei(balanceWei, 'ether');
-      setEtherBalance(balanceEther);
+      setEtherBalance(parseFloat(balanceEther).toFixed(2));
+
+      // Fetch numConfirmationsRequired
+      const fetchedNumConfirmationsRequired = await multiSigWallet.methods.numConfirmationsRequired().call();
+      setNumConfirmationsRequired(fetchedNumConfirmationsRequired);
+
+      // Fetch numOwners
+      const fetchedOwners = await multiSigWallet.methods.getOwners().call();
+      setNumOwners(fetchedOwners.length);
     };
+
+    fetchInfo();
+    fetchLastTransactionIndex();
+
 
     const subscription = web3.eth.subscribe('newBlockHeaders', async (error, blockHeader) => {
       if (error) {
         console.error(`Error in block subscription: ${error.message}`);
         return;
       }
-      await fetchBalance();
+      await fetchLastTransactionIndex();
+      await fetchInfo()
     });
-
-    fetchBalance();
 
     return () => {
       subscription.unsubscribe();
     };
+    
   }, [web3, address]);
 
   const closeErrorModal = () => setErrorMsg('');
@@ -58,7 +78,7 @@ const InteractWithMultiSigWallet = () => {
     try {
       const accounts = await web3.eth.getAccounts();
       await multiSigWallet.methods
-        .confirmTransaction(transactionIndex)
+        .confirmTransaction(lastTransactionIndex)
         .send({ from: accounts[0] });
 
       console.log('Transaction confirmed');
@@ -74,7 +94,7 @@ const InteractWithMultiSigWallet = () => {
     try {
       const accounts = await web3.eth.getAccounts();
       await multiSigWallet.methods
-        .executeTransaction(transactionIndex)
+        .executeTransaction(lastTransactionIndex)
         .send({ from: accounts[0] });
 
       console.log('Transaction executed');
@@ -97,8 +117,10 @@ const InteractWithMultiSigWallet = () => {
   return (
     <div>
       <h3>Balance: {etherBalance} Ether</h3>
+      <h5>Confirmations Required (M): {numConfirmationsRequired}</h5>
+      <h5>Total Owners(N): {numOwners}</h5>
       <Form onSubmit={onSubmitTransaction}>
-        <h3>Submit Transaction</h3>
+        <h3 style={{ marginTop: '20px' }}>Submit Transaction</h3>
         <Form.Field>
           <label>To</label>
           <Input
@@ -129,13 +151,13 @@ const InteractWithMultiSigWallet = () => {
         </Button>
       </Form>
       <Form>
-        <h3>Confirm or Execute Transaction</h3>
+        <h3 style={{ marginTop: '20px' }}>Confirm or Execute Transaction</h3>
         <Form.Field>
           <label>Transaction Index</label>
           <Input
             type="number"
             min="0"
-            value={transactionIndex}
+            value={transactionIndex !== '' ? transactionIndex : lastTransactionIndex}
             onChange={event => setTransactionIndex(event.target.value)}
           />
         </Form.Field>

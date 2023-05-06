@@ -147,7 +147,7 @@ export default function Campaign() {
           <Table.Cell>{contractInfo.transactionCount}</Table.Cell>
         </Table.Row>
 
-        {transactions.map((transaction, index) => (
+        {transactions.slice().reverse().map((transaction, index) => (
           <React.Fragment key={index}>
             <Table.Row>
               <Table.Cell colSpan="2">

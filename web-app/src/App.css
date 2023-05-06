@@ -2,6 +2,17 @@
   text-align: center;
 }
 
+.spacebefore {
+  margin-top: 20px;
+}
+
+
+h1, h2, h3, h4,h5 {
+  margin: 0;
+}
+
+
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
