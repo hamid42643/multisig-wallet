@@ -56,10 +56,6 @@ function App() {
     <Container>
       <Menu secondary>
         <Menu.Item
-          name='home'
-          onClick={() => navigate('/')}
-        />
-        <Menu.Item
           name='Submit transaction'
           onClick={() => navigate('/interact/0x33e5C51e980517F0b088BfA1C61C579B0D8f1A29')}
         />
@@ -70,8 +66,10 @@ function App() {
         <Menu.Item>
           <Label content={`Current account: ${currentAccount}`} />
         </Menu.Item>
-
-
+        <Menu.Item
+          name='Blockchain viewer'
+          onClick={() => navigate('/')}
+        />
       </Menu>
       <Routes>
         <Route path='/' element={<Home />} />

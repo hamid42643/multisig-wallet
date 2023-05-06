@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { getWeb3, getContract } from '../ethereum/utils';
 import { Button, Form, Input, Modal } from 'semantic-ui-react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const InteractWithMultiSigWallet = () => {
   const [numConfirmationsRequired, setNumConfirmationsRequired] = useState(0);
@@ -16,18 +17,27 @@ const InteractWithMultiSigWallet = () => {
   const [etherBalance, setEtherBalance] = useState('');
   const [lastTransactionIndex, setLastTransactionIndex] = useState(0);
   const multiSigWallet = useMemo(() => getContract(web3, address), [web3, address]);
+  const [balanceUSD, setBalanceUSD] = useState('');
 
   useEffect(() => {
     const fetchLastTransactionIndex = async () => {
       const transactionCount = await multiSigWallet.methods.getTransactionCount().call();
       setLastTransactionIndex(transactionCount - 1);
     };
-    
+
     const fetchInfo = async () => {
       // Fetch balance
       const balanceWei = await web3.eth.getBalance(address);
       const balanceEther = web3.utils.fromWei(balanceWei, 'ether');
       setEtherBalance(parseFloat(balanceEther).toFixed(2));
+
+      // Fetch conversion rate
+      const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd');
+      const conversionRate = response.data.ethereum.usd;
+      const balanceUSD = parseFloat(balanceEther) * conversionRate;
+      
+      setBalanceUSD(parseFloat(balanceUSD).toFixed(2));
+
 
       // Fetch numConfirmationsRequired
       const fetchedNumConfirmationsRequired = await multiSigWallet.methods.numConfirmationsRequired().call();
@@ -54,12 +64,12 @@ const InteractWithMultiSigWallet = () => {
     return () => {
       subscription.unsubscribe();
     };
-    
+
   }, [web3, address]);
 
   const closeErrorModal = () => setErrorMsg('');
 
-  
+
   const onSubmitTransaction = async () => {
     try {
       const accounts = await web3.eth.getAccounts();
@@ -116,7 +126,7 @@ const InteractWithMultiSigWallet = () => {
 
   return (
     <div>
-      <h3>Balance: {etherBalance} Ether</h3>
+      <h3>Balance: {etherBalance} Ether (${balanceUSD} USD)</h3>
       <h5>Confirmations Required (M): {numConfirmationsRequired}</h5>
       <h5>Total Owners(N): {numOwners}</h5>
       <Form onSubmit={onSubmitTransaction}>
