@@ -12,6 +12,7 @@ const FAILED_STATE = '1'
 const SUCCEDED_STATE = '2'
 
 export default function Campaign() {
+  const [numConfirmationsRequired, setNumConfirmationsRequired] = useState('N/A');
   const [totalEther, setTotalEther] = useState('N/A');
   const web3 = useMemo(() => getWeb3(), [])
   const [currentAccount, setCurrentAccount] = useState(null)
@@ -51,7 +52,7 @@ export default function Campaign() {
   })
 
   useEffect(() => {
-    async function fetchAllTransactions() {
+    async function fetchAllTransactionsAndUpdate() {
       try {
         const contract = getContract(web3, address)
   
@@ -64,13 +65,41 @@ export default function Campaign() {
         }
     
         setTransactions(fetchedTransactions);
+        await getTransactionHeader(address); 
       } catch (error) {
         console.error('Error fetching transactions:', error);
       }
+    };
+
+    if (web3) {
+      const updateTransactionsOnNewBlock = async () => {
+        await fetchAllTransactionsAndUpdate();
+      };
+  
+      const subscription = web3.eth.subscribe('newBlockHeaders', (error, result) => {
+        if (!error) {
+          updateTransactionsOnNewBlock();
+          return;
+        }
+  
+        console.error('Error subscribing to newBlockHeaders:', error);
+      });
+  
+      // Fetch transactions initially
+      fetchAllTransactionsAndUpdate();
+  
+      // Cleanup subscription on component unmount
+      return () => {
+        subscription.unsubscribe((error, success) => {
+          if (error) {
+            console.error('Error unsubscribing from newBlockHeaders:', error);
+          }
+        });
+      };
     }
     
-    async function getCampaign(address) {
-      if (!currentAccount) return;
+    async function getTransactionHeader(address) {
+      if (!currentAccount || !web3) return;
 
       const contract = getContract(web3, address)
 
@@ -80,12 +109,13 @@ export default function Campaign() {
 
         const ownersArray = await contract.methods.getOwners().call()
         const transactionCount = await contract.methods.getTransactionCount().call()
-        // const transaction = await contract.methods.getTransaction(0).call()
+        const confirmationsRequired = await contract.methods.numConfirmationsRequired().call();
 
         const owners = ownersArray.join(', ');
         
 
         setTotalEther(etherBalance);
+        setNumConfirmationsRequired(confirmationsRequired);
         setContractInfo({
           owners: owners,
           transactionCount: transactionCount,
@@ -95,9 +125,10 @@ export default function Campaign() {
         console.log("error during contract loading: "+e)
         setContractInfo(null)
       }
-    }
-    fetchAllTransactions();
-    getCampaign(address)
+    };
+
+    fetchAllTransactionsAndUpdate();
+    getTransactionHeader(address)
   }, [web3, address, currentAccount, networkId])
 
   if (!currentAccount) {
@@ -146,6 +177,10 @@ export default function Campaign() {
           <Table.Cell>transactionCount</Table.Cell>
           <Table.Cell>{contractInfo.transactionCount}</Table.Cell>
         </Table.Row>
+        <Table.Row>
+          <Table.Cell>Confirmations Required</Table.Cell>
+          <Table.Cell>{numConfirmationsRequired}</Table.Cell>
+      </Table.Row>
 
         {transactions.slice().reverse().map((transaction, index) => (
           <React.Fragment key={index}>

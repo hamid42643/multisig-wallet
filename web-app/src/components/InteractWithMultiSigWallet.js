@@ -75,14 +75,16 @@ const InteractWithMultiSigWallet = () => {
       const accounts = await web3.eth.getAccounts();
       await multiSigWallet.methods
         .submitTransaction(to, web3.utils.toWei(value, 'ether'), web3.utils.asciiToHex(data))
-        .send({ from: accounts[0] });
-
+        .send({ from: accounts[0] })
+        .on('receipt', function(receipt) {
+          console.log('Transaction receipt:', receipt);
+        });
       console.log('Transaction submitted');
       setErrorMsg('Transaction submitted');
     } catch (error) {
       setErrorMsg('Error submitting transaction: ' + error.message);
     }
-  };
+  }
 
   const onConfirmTransaction = async () => {
     try {

@@ -67,7 +67,7 @@ function App() {
           <Label content={`Current account: ${currentAccount}`} />
         </Menu.Item>
         <Menu.Item
-          name='Blockchain viewer'
+          name='Contract viewer'
           onClick={() => navigate('/')}
         />
       </Menu>
