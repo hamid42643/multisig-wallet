@@ -8,17 +8,38 @@ import { Container, Menu, Button, Label } from 'semantic-ui-react';
 import Home from './components/Home';
 import NotFound from './components/NotFound';
 import InteractWithMultiSigWallet from './components/InteractWithMultiSigWallet';
-
+import dotenv from 'dotenv';
 import {
   useNavigate,
 } from 'react-router-dom';
 
+dotenv.config();
+
+
 function App() {
-  const [contractAddress, setContractAddress] = React.useState('');
   const web3 = useMemo(() => getWeb3(), [])
   let navigate = useNavigate();
   const [currentAccount, setCurrentAccount] = React.useState('');
   const [accounts, setAccounts] = React.useState([]);
+
+  const [networkName, setNetworkName] = React.useState('');
+
+  
+
+  function getNetworkName(chainId) {
+    switch (chainId) {
+      case 1:
+        return 'Ethereum Mainnet';
+      case 137:
+        return 'Polygon Mainnet';
+      case 5:
+        return 'Goerli Testnet';
+      case 11155111:
+        return 'Sepolia Network';
+      default:
+        return 'Local Network';
+    }
+  }
 
   async function connectWallet() {
     try {
@@ -27,6 +48,8 @@ function App() {
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: web3.utils.numberToHex(chainId) }],
       });
+      setNetworkName(getNetworkName(chainId)); // Update the network name
+
       const accounts = await web3.eth.getAccounts();
       setCurrentAccount(accounts[0]);
       setAccounts(accounts);
@@ -52,12 +75,14 @@ function App() {
     connectWallet();
   }, []);
 
+  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
+
   return (
     <Container>
       <Menu secondary>
         <Menu.Item
           name='Submit transaction'
-          onClick={() => navigate('/interact/0x33e5C51e980517F0b088BfA1C61C579B0D8f1A29')}
+          onClick={() => navigate(`/interact/${contractAddress}`)}
         />
         <Menu.Item
           name='Create new wallet'
@@ -65,6 +90,9 @@ function App() {
         />
         <Menu.Item>
           <Label content={`Current account: ${currentAccount}`} />
+        </Menu.Item>
+        <Menu.Item>
+          <Label content={`Network: ${networkName}`} />
         </Menu.Item>
         <Menu.Item
           name='Contract viewer'

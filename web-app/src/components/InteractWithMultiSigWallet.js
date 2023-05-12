@@ -150,20 +150,12 @@ const InteractWithMultiSigWallet = () => {
             onChange={event => setValue(event.target.value)}
           />
         </Form.Field>
-        <Form.Field>
-          <label>Data (optional)</label>
-          <Input
-            placeholder="Data"
-            value={data}
-            onChange={event => setData(event.target.value)}
-          />
-        </Form.Field>
         <Button primary type="submit">
           Submit Transaction
         </Button>
       </Form>
       <Form>
-        <h3 style={{ marginTop: '20px' }}>Confirm or Execute Transaction</h3>
+        <h3 style={{ marginTop: '20px' }}>Approve or Execute Transaction</h3>
         <Form.Field>
           <label>Transaction Index</label>
           <Input
@@ -174,7 +166,7 @@ const InteractWithMultiSigWallet = () => {
           />
         </Form.Field>
         <Button primary onClick={onConfirmTransaction}>
-          Confirm Transaction
+          Approve Transaction
         </Button>
         <Button primary onClick={onExecuteTransaction}>
           Execute Transaction
