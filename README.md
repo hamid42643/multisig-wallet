@@ -1,45 +1,37 @@
-# multisig-wallet
-Ethereum multisig wallet
+## MultiSig Wallet Web Application
+This is a web application for interacting with a MultiSig wallet smart contract on the Ethereum blockchain. The MultiSig wallet allows multiple owners to manage funds and requires a specified number of confirmations from owners before executing transactions.
+
+## Functionality
+Submit Transaction: Owners can submit a transaction by providing the recipient's address, the amount in Ether
+Confirm Transaction: Owners can confirm pending transactions to reach the required number of confirmations.
+Execute Transaction: Owners can execute a confirmed transaction, transferring the specified amount to the recipient.
+View Transactions: Using contract viewer users can view transaction details, including the transaction status and confirmation count.
+
+## How to Run the Application
+Follow the steps below to run the MultiSig wallet web application:
+
+#### Clone the repository to your local machine.
+Install the required dependencies by running npm install in the project directory.
+Make sure you have a compatible Ethereum provider or node available (e.g., local development node or Infura).
+Update the ethereum/utils.js file with your Ethereum provider details (e.g., Infura API key or local node endpoint).
+Start the application by running npm start in the project directory.
+Open your web browser and navigate to http://localhost:3000 to access the MultiSig wallet web application.
+Note: Ensure that you have MetaMask or a compatible Ethereum wallet extension installed in your browser and connected to the desired network (e.g., Mainnet, Ropsten, Rinkeby) to interact with the MultiSig wallet on the Ethereum blockchain.
+
+#### Dependencies
+The MultiSig wallet web application relies on the following major dependencies:
+
+React: JavaScript library for building user interfaces.
+Web3.js: Ethereum library for interacting with the Ethereum blockchain.
+Semantic UI React: Component library for creating stylish user interfaces.
+react-router-dom: Library for handling routing within the React application.
+Compatibility
+This application has been tested on modern web browsers, including Google Chrome, Mozilla Firefox, and Safari. It is recommended to use the latest stable versions of these browsers for optimal performance.
+
+#### License
+This application is released under the MIT License. Feel free to modify and distribute the application according to the terms of the license.
 
 
 
-npx create-react-app webapp
 
-
-npm install truffle
-
-truffle init
-
-truffle compile
-
-npm install chai
-
-
-<!-- deploy contract -->
-truffle migrate --network ganache
-
-
-<!-- interact -->
-truffle console --network ganache
-
-
-<!-- Inside the console, you can access the MultiSigWallet contract instance using the following command: -->
-const multiSigWallet = await MultiSigWallet.deployed();
-
-
-<!-- You can then call any function of the MultiSigWallet contract using the multiSigWallet instance. For example, to submit a new transaction, you can use the submitTransaction function as follows:  -->
-
-multiSigWallet.submitTransaction("0xDE924669c2319D05B3C3ee96464a13760D5617d1", 1, data, { from: "0x2603BFBA3160f17E3084dB37c329E25eC0D96601" });
-
-<!-- To get the list of owners:  -->
-MultiSigWallet.deployed().then(function(instance) {return instance.getOwners();})
-
-<!-- To submit a transaction to account 4:  -->
-MultiSigWallet.deployed().then(function(instance) {return instance.submitTransaction("0xDE924669c2319D05B3C3ee96464a13760D5617d1", web3.utils.toWei('0.001', 'ether'), []);})
-
-<!-- To confirm a transaction:  -->
-MultiSigWallet.deployed().then(function(instance) {return instance.confirmTransaction(TX_INDEX, {from: OWNER_ADDRESS});})
-
-<!-- To execute a transaction:  -->
-MultiSigWallet.deployed().then(function(instance) {return instance.executeTransaction(TX_INDEX);})
 
